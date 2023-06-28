@@ -11,7 +11,7 @@ import ComposableArchitecture
 struct ContentView: View {
     @State var petPosition: CGFloat = 0;
     @State var petDirection: Bool =  false; // 0=right, 1=left
-    let store: StoreOf<AppState>
+    let store: StoreOf<DeskPet>
     
     let speed: CGFloat = 5
     func checkDirectionChange() -> Void{
@@ -58,6 +58,23 @@ struct ContentView: View {
             .aspectRatio(1, contentMode: .fit)
             .toolbar {
                 // TODO: This is where the stats will go
+                ToolbarActionView(store: self.store)
+               
+            }
+        }
+    }
+}
+
+
+struct ToolbarActionView: View {
+    let store: StoreOf<DeskPet>
+    
+    var body: some View {
+        WithViewStore(self.store, observe: { $0 }) { viewStore in
+            Button(action:{
+                viewStore.send(.feedPet)
+            }){
+                Text("🍖  Feed")
             }
         }
     }
@@ -65,8 +82,8 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(store: Store(initialState: AppState.State()) {
-            AppState()
+        ContentView(store: Store(initialState: DeskPet.State()) {
+            DeskPet()
           })
     }
 }

@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 struct DeskPet: ReducerProtocol {
     struct State: Equatable {
-        var hunger = 0 // hunger on a scale of 0 to 5, 0=fat & happy, 5=dead from starvation
+        var timeLastEaten: Date? // last meal is a timestamp
     }
     enum Action: Equatable {
         case feedPet
@@ -19,33 +19,8 @@ struct DeskPet: ReducerProtocol {
     func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .feedPet:
-            if(state.hunger > 0){
-                state.hunger = state.hunger - 1
-            }
+            state.timeLastEaten = Date()
             return .none
-        }
-    }
-}
-
-struct AppState: ReducerProtocol {
-    struct State: Equatable {
-        var pet = DeskPet.State()
-    }
-    
-    enum Action: Equatable {
-        case pet(DeskPet.Action)
-    }
-    
-    var body: some ReducerProtocol<State, Action> {
-        Scope(state: \.pet, action: /Action.pet) {
-            DeskPet()
-        }
-        
-        Reduce { state, action in
-            switch action {
-            case .pet:
-                return .none
-            }
         }
     }
 }
@@ -54,8 +29,8 @@ struct AppState: ReducerProtocol {
 struct Desk_PetApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(store: Store(initialState: AppState.State()) {
-                AppState()
+            ContentView(store: Store(initialState: DeskPet.State()) {
+                DeskPet()
               })
         }.windowResizabilityContentSize()
     }
