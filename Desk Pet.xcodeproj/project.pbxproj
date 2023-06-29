@@ -14,6 +14,8 @@
 		BAD31C3A2A4A4395004795E8 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = BAD31C392A4A4395004795E8 /* ComposableArchitecture */; };
 		BAD31C3C2A4D0AAC004795E8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD31C3B2A4D0AAC004795E8 /* Constants.swift */; };
 		BAD31C3E2A4D0B74004795E8 /* PetStateCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD31C3D2A4D0B74004795E8 /* PetStateCalculation.swift */; };
+		BAD31C402A4DA2A9004795E8 /* ToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD31C3F2A4DA2A9004795E8 /* ToolbarView.swift */; };
+		BAD31C422A4DA31D004795E8 /* PetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD31C412A4DA31D004795E8 /* PetView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,8 @@
 		BAD31C322A476C64004795E8 /* Desk_Pet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Desk_Pet.entitlements; sourceTree = "<group>"; };
 		BAD31C3B2A4D0AAC004795E8 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		BAD31C3D2A4D0B74004795E8 /* PetStateCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PetStateCalculation.swift; path = utils/PetStateCalculation.swift; sourceTree = "<group>"; };
+		BAD31C3F2A4DA2A9004795E8 /* ToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarView.swift; sourceTree = "<group>"; };
+		BAD31C412A4DA31D004795E8 /* PetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,11 +64,13 @@
 			children = (
 				BAD31C292A476C63004795E8 /* Desk_PetApp.swift */,
 				BAD31C2B2A476C63004795E8 /* ContentView.swift */,
+				BAD31C412A4DA31D004795E8 /* PetView.swift */,
 				BAD31C2D2A476C64004795E8 /* Assets.xcassets */,
 				BAD31C322A476C64004795E8 /* Desk_Pet.entitlements */,
 				BAD31C2F2A476C64004795E8 /* Preview Content */,
 				BAD31C3B2A4D0AAC004795E8 /* Constants.swift */,
 				BAD31C3D2A4D0B74004795E8 /* PetStateCalculation.swift */,
+				BAD31C3F2A4DA2A9004795E8 /* ToolbarView.swift */,
 			);
 			path = "Desk Pet";
 			sourceTree = "<group>";
@@ -153,8 +159,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BAD31C422A4DA31D004795E8 /* PetView.swift in Sources */,
 				BAD31C2C2A476C63004795E8 /* ContentView.swift in Sources */,
 				BAD31C3E2A4D0B74004795E8 /* PetStateCalculation.swift in Sources */,
+				BAD31C402A4DA2A9004795E8 /* ToolbarView.swift in Sources */,
 				BAD31C2A2A476C63004795E8 /* Desk_PetApp.swift in Sources */,
 				BAD31C3C2A4D0AAC004795E8 /* Constants.swift in Sources */,
 			);
