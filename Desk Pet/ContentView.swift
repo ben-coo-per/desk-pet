@@ -20,6 +20,9 @@ struct ContentView: View {
                 PetView(store: self.store)
             }
             .frame(width: CANVAS_WIDTH, height:400)
+            .background(
+                LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .topLeading, endPoint: .bottom)
+            )
             .aspectRatio(1, contentMode: .fit)
             .toolbar {
                 // TODO: This is where the stats will go
@@ -70,18 +73,7 @@ struct PetView: View {
                     .rotation3DEffect(.degrees(petDirection ? 0 : 180), axis: (x: 1, y: 0, z:0))
                 // Pet movement
                     .offset(x: petPosition, y:-5)
-                Text("🍖")
-                    .offset(x: petPosition, y: viewStore.feedingAnimation ? -20 : -80)
-                    .scaleEffect(viewStore.feedingAnimation ? 1 : 1.5)
-                    .opacity(viewStore.feedingAnimation ? 1 : 0)
-                    .onChange(of: viewStore.feedingAnimation) { _ in
-                        // after 1 second, remove the animation
-                        if(viewStore.feedingAnimation) {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                viewStore.send(.endAnimation)
-                            }
-                        }
-                    }
+                AnimationsView(store: self.store, petPosition: $petPosition)
             }.task {
                 await petPassiveMovement()
             }
@@ -89,6 +81,29 @@ struct PetView: View {
     }
 }
 
+
+struct AnimationsView: View {
+    let store: StoreOf<DeskPet>
+    @Binding var petPosition: CGFloat
+    
+    
+    var body: some View {
+        WithViewStore(self.store, observe: {$0}){ viewStore in
+            Text("🍖")
+            .offset(x: petPosition, y: viewStore.feedingAnimation ? -20 : -80)
+            .scaleEffect(viewStore.feedingAnimation ? 1 : 1.5)
+            .opacity(viewStore.feedingAnimation ? 1 : 0)
+            .onChange(of: viewStore.feedingAnimation) { _ in
+                // after 1 second, remove the animation
+                if(viewStore.feedingAnimation) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        viewStore.send(.endAnimation)
+                    }
+                }
+            }
+        }
+    }
+}
 
 struct ToolbarActionView: View {
     let store: StoreOf<DeskPet>
