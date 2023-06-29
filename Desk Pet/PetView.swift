@@ -14,8 +14,8 @@ struct PetView: View {
     
     
     let SPEED: CGFloat = 5
-    @State var petPosition: CGFloat = 0;
-    @State var petDirection: Bool =  false; // false=right, true=left
+    @State var petPosition = CGFloat.random(in: -120...120);
+    @State var petDirection =  Bool.random(); // false=right, true=left
     
     func checkDirectionChange() -> Void{
         let CANVAS_EDGE_DISTANCE = (CANVAS_WIDTH-100) / 2

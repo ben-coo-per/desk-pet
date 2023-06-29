@@ -18,7 +18,7 @@ struct ContentView: View {
                 PetView(store: self.store)
             }
             .frame(width: CANVAS_WIDTH, height: CANVAS_HEIGHT)
-            .background(
+            .background( 
                 LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .topLeading, endPoint: .bottom)
             )
             .aspectRatio(1, contentMode: .fit)
