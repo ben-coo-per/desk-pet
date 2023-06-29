@@ -41,34 +41,31 @@ struct PetView: View {
             }
     }
     var body: some View {
-        ZStack{
-            Rectangle()
-                .fill(
-                    LinearGradient(colors: [.gray, Color(red: 0.45, green: 0.5, blue: 0.56)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                )
-                .frame(width: CANVAS_WIDTH, height: 50)
-                .offset(x:0, y:25)
-            Group {
-                Image("Monkey")
-                    .resizable()
-                    .frame(width: 80, height:80)
-                    .padding(.horizontal)
-                    .aspectRatio(1, contentMode: .fit)
-                // Handles flipping of pet
-                    .rotationEffect(.degrees(petDirection ? 0 : 180 ), anchor: .center)
-                    .rotation3DEffect(.degrees(petDirection ? 0 : 180), axis: (x: 1, y: 0, z:0))
-                // Pet movement
-                    .offset(x: petPosition, y:-5)
-                PetStateHoverView(store: self.store, petPosition: $petPosition)
-                    .opacity(showPetStatePopover ? 0.9 : 0)
-            }.onHover{cursor in
-                withAnimation(.easeInOut){
-                    showPetStatePopover = cursor
+        WithViewStore(self.store, observe: {$0.pet}){ petStore in
+                if(petStore.isAlive){
+                    Group {
+                        Image("Monkey")
+                            .resizable()
+                            .frame(width: 80, height:80)
+                            .padding(.horizontal)
+                            .aspectRatio(1, contentMode: .fit)
+                        // Handles flipping of pet
+                            .rotationEffect(.degrees(petDirection ? 0 : 180 ), anchor: .center)
+                            .rotation3DEffect(.degrees(petDirection ? 0 : 180), axis: (x: 1, y: 0, z:0))
+                        // Pet movement
+                            .offset(x: petPosition, y:-5)
+                        
+                        PetStateHoverView(store: self.store, petPosition: $petPosition)
+                            .opacity(showPetStatePopover ? 0.9 : 0)
+                    }.onHover{cursor in
+                        withAnimation(.easeInOut){
+                            showPetStatePopover = cursor
+                        }
+                    }.task {
+                        await petPassiveMovement()
+                    }
                 }
-            }
-            AnimationsView(store: self.store, petPosition: $petPosition)
-        }.task {
-            await petPassiveMovement()
+                AnimationsView(store: self.store, petPosition: $petPosition)
         }
     }
 }

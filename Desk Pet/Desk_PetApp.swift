@@ -8,8 +8,15 @@
 import SwiftUI
 import ComposableArchitecture
 
+struct Grave: Equatable, Codable {
+    var id = UUID()
+    var site: CGFloat
+}
+
+
 struct Pet: Equatable, Codable {
-    var timeLastFed: Date = Date()  // last meal is a timestamp
+    var timeLastFed: Date = Date()
+    var isAlive: Bool = true
 }
 
 
@@ -21,15 +28,28 @@ struct DeskPet: ReducerProtocol {
     
     struct State: Equatable {
         var pet: Pet
+        var graves: [Grave]
         var feedingAnimation: Bool = false
         
         init() {
             // get pet from storage
             let fm = FileManager()
-            let petFromStorage = fm.getPetFromStorage()
+            var petFromStorage = fm.getPetFromStorage()
+            var gravesFromStorage = fm.getGravesFromStorage()
+
+            if(!checkPetIsAlive(timeLastFed: petFromStorage.timeLastFed)){
+                // it's a sad day 😭
+                petFromStorage.isAlive = false
+                gravesFromStorage.append(Grave(site: CGFloat.random(in: -120...120)))
+            }
+            
             // set the state
             self.pet = petFromStorage
+            self.graves = gravesFromStorage
+            
+            // update saved storage
             fm.updatePetInStorage(pet: self.pet)
+            fm.updateGravesInStorage(graves: self.graves)
         }
         
     }
@@ -78,26 +98,26 @@ extension Scene {
 
 
 extension FileManager {
-    private func getFileStorageUrl() -> URL {
+    private func getFileStorageUrl(path: String) -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return paths[0].appendingPathComponent("deskPet.json")
+        return paths[0].appendingPathComponent("deskPet/\(path)")
     }
     
     func updatePetInStorage(pet: Pet) -> Void {
         let jsonEncoder = JSONEncoder()
-        let fileStorageUrl = self.getFileStorageUrl()
+        let fileStorageUrl = self.getFileStorageUrl(path: "pet")
         do {
             let json = try jsonEncoder.encode(pet)
             try json.write(to: fileStorageUrl)
         } catch {
-            print("Could not upload ideas")
+            print("Could not upload pet")
             // TODO: add an error toast/alert of some kind
         }
     }
 
     func getPetFromStorage() -> Pet {
         let jsonDecoder = JSONDecoder()
-        let fileStorageUrl = self.getFileStorageUrl()
+        let fileStorageUrl = self.getFileStorageUrl(path: "pet")
 
         do {
             let json = try Data(contentsOf: fileStorageUrl)
@@ -106,6 +126,32 @@ extension FileManager {
         } catch {
             print(error.localizedDescription)
             return Pet()
+        }
+    }
+    
+    func updateGravesInStorage(graves: [Grave]) -> Void {
+        let jsonEncoder = JSONEncoder()
+        let fileStorageUrl = self.getFileStorageUrl(path: "graves")
+        do {
+            let json = try jsonEncoder.encode(graves)
+            try json.write(to: fileStorageUrl)
+        } catch {
+            print("Could not upload graves")
+            // TODO: add an error toast/alert of some kind
+        }
+    }
+    
+    func getGravesFromStorage() -> [Grave] {
+        let jsonDecoder = JSONDecoder()
+        let fileStorageUrl = self.getFileStorageUrl(path: "graves")
+
+        do {
+            let json = try Data(contentsOf: fileStorageUrl)
+            let decoded = try jsonDecoder.decode([Grave].self, from: json)
+            return decoded
+        } catch {
+            print(error.localizedDescription)
+            return []
         }
     }
 }

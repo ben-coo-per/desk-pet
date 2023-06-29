@@ -14,7 +14,12 @@ extension Date {
     }
 }
 
-public func getHungerState(timeLastFed: Date) -> Int{
+public func getHungerState(timeLastFed: Date) -> Int {
     let hoursSinceLastFed = timeLastFed.hours(from: Date())  // Returns a negative number
     return 5 + hoursSinceLastFed/PET_HUNGER_TIME
+}
+
+public func checkPetIsAlive(timeLastFed: Date) -> Bool {
+    let lastEaten = getHungerState(timeLastFed: timeLastFed)
+    return lastEaten >= 0
 }

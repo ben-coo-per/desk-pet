@@ -15,7 +15,7 @@ struct ContentView: View {
         WithViewStore(self.store, observe: { $0 }) { viewStore in
             VStack {
                 Spacer()
-                PetView(store: self.store)
+                RoomSceneView(store: self.store)
             }
             .frame(width: CANVAS_WIDTH, height: CANVAS_HEIGHT)
             .background( 
