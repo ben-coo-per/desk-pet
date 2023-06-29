@@ -18,7 +18,7 @@ struct ToolbarActionView: View {
                 viewStore.send(.feedPet, animation: .interactiveSpring(response: 0.8, dampingFraction: 0.8))
             }){
                 Text("🍖  Feed")
-            }.disabled(viewStore.feedingAnimation || getHungerState(timeLastFed: viewStore.timeLastFed) == 5)
+            }.disabled(viewStore.feedingAnimation || getHungerState(timeLastFed: viewStore.pet.timeLastFed) == 5)
         }
     }
 }
