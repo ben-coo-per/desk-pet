@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 struct DeskPet: ReducerProtocol {
     struct State: Equatable {
-        var timeLastEaten: Date? // last meal is a timestamp
+        var timeLastFed: Date = Date() // last meal is a timestamp
         var feedingAnimation: Bool = false
     }
     enum Action: Equatable {
@@ -21,7 +21,7 @@ struct DeskPet: ReducerProtocol {
     func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .feedPet:
-            state.timeLastEaten = Date()
+            state.timeLastFed = Date()
             state.feedingAnimation = true
             return .none
         case .endAnimation:

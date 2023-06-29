@@ -8,8 +8,6 @@
 import SwiftUI
 import ComposableArchitecture
 
-let CANVAS_WIDTH: CGFloat = 500
-
 struct ContentView: View {
     let store: StoreOf<DeskPet>
     
@@ -37,7 +35,8 @@ struct ContentView: View {
 struct PetView: View {
     let store: StoreOf<DeskPet>
     @State var petPosition: CGFloat = 0;
-    @State var petDirection: Bool =  false; // 0=right, 1=left
+    @State var petDirection: Bool =  false; // false=right, true=left
+    @State var showPetStatePopover: Bool = false;
     
     let speed: CGFloat = 5
     func checkDirectionChange() -> Void{
@@ -61,18 +60,29 @@ struct PetView: View {
         WithViewStore(self.store, observe: {$0}){ viewStore in
             ZStack{
                 Rectangle()
-                    .fill(.gray)
+                    .fill(
+                        LinearGradient(colors: [.gray, Color(red: 0.45, green: 0.5, blue: 0.56)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    )
                     .frame(width: CANVAS_WIDTH, height: 50)
                     .offset(x:0, y:25)
-                Image("Monkey")
-                    .resizable()
-                    .frame(width: 80, height:80)
-                    .aspectRatio(1, contentMode: .fit)
-                // Handles flipping of pet
-                    .rotationEffect(.degrees(petDirection ? 0 : 180 ), anchor: .center)
-                    .rotation3DEffect(.degrees(petDirection ? 0 : 180), axis: (x: 1, y: 0, z:0))
-                // Pet movement
-                    .offset(x: petPosition, y:-5)
+                Group {
+                    Image("Monkey")
+                        .resizable()
+                        .frame(width: 80, height:80)
+                        .padding(.horizontal)
+                        .aspectRatio(1, contentMode: .fit)
+                    // Handles flipping of pet
+                        .rotationEffect(.degrees(petDirection ? 0 : 180 ), anchor: .center)
+                        .rotation3DEffect(.degrees(petDirection ? 0 : 180), axis: (x: 1, y: 0, z:0))
+                    // Pet movement
+                        .offset(x: petPosition, y:-5)
+                    PetStateHoverView(store: self.store, petPosition: $petPosition)
+                        .opacity(showPetStatePopover ? 0.9 : 0)
+                }.onHover{cursor in
+                    withAnimation(.easeInOut){
+                        showPetStatePopover = cursor
+                    }
+                }
                 AnimationsView(store: self.store, petPosition: $petPosition)
             }.task {
                 await petPassiveMovement()
@@ -81,6 +91,24 @@ struct PetView: View {
     }
 }
 
+struct PetStateHoverView: View {
+    let store: StoreOf<DeskPet>
+    @Binding var petPosition: CGFloat
+    
+    
+    var body: some View {
+        WithViewStore(self.store, observe: {$0}){viewStore in
+            HStack{
+                Text("🍖 Hunger: \(getHungerState(timeLastFed:viewStore.timeLastFed))/5")
+                    .padding(.all)
+                    .background(.thinMaterial,
+                                in: RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    )
+                    .offset(x: petPosition, y: -70)
+            }
+        }
+    }
+}
 
 struct AnimationsView: View {
     let store: StoreOf<DeskPet>
@@ -114,7 +142,7 @@ struct ToolbarActionView: View {
                 viewStore.send(.feedPet, animation: .interactiveSpring(response: 0.8, dampingFraction: 0.8))
             }){
                 Text("🍖  Feed")
-            }.disabled(viewStore.feedingAnimation)
+            }.disabled(viewStore.feedingAnimation || getHungerState(timeLastFed: viewStore.timeLastFed) == 5)
         }
     }
 }
