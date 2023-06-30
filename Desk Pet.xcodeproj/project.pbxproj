@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		BA6B59D02A4E0CB800FD5864 /* RoomSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6B59CF2A4E0CB800FD5864 /* RoomSceneView.swift */; };
 		BA6B59D22A4E0DC800FD5864 /* GravesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6B59D12A4E0DC800FD5864 /* GravesView.swift */; };
+		BA6B59D42A4F434700FD5864 /* PoopsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6B59D32A4F434700FD5864 /* PoopsView.swift */; };
 		BAD31C2A2A476C63004795E8 /* Desk_PetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD31C292A476C63004795E8 /* Desk_PetApp.swift */; };
 		BAD31C2C2A476C63004795E8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD31C2B2A476C63004795E8 /* ContentView.swift */; };
 		BAD31C2E2A476C64004795E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BAD31C2D2A476C64004795E8 /* Assets.xcassets */; };
@@ -23,6 +24,7 @@
 /* Begin PBXFileReference section */
 		BA6B59CF2A4E0CB800FD5864 /* RoomSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSceneView.swift; sourceTree = "<group>"; };
 		BA6B59D12A4E0DC800FD5864 /* GravesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GravesView.swift; sourceTree = "<group>"; };
+		BA6B59D32A4F434700FD5864 /* PoopsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoopsView.swift; sourceTree = "<group>"; };
 		BAD31C262A476C63004795E8 /* Desk Pet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Desk Pet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAD31C292A476C63004795E8 /* Desk_PetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Desk_PetApp.swift; sourceTree = "<group>"; };
 		BAD31C2B2A476C63004795E8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 				BAD31C3D2A4D0B74004795E8 /* PetStateCalculation.swift */,
 				BAD31C3F2A4DA2A9004795E8 /* ToolbarView.swift */,
 				BA6B59CF2A4E0CB800FD5864 /* RoomSceneView.swift */,
+				BA6B59D32A4F434700FD5864 /* PoopsView.swift */,
 				BA6B59D12A4E0DC800FD5864 /* GravesView.swift */,
 			);
 			path = "Desk Pet";
@@ -165,6 +168,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA6B59D42A4F434700FD5864 /* PoopsView.swift in Sources */,
 				BAD31C422A4DA31D004795E8 /* PetView.swift in Sources */,
 				BAD31C2C2A476C63004795E8 /* ContentView.swift in Sources */,
 				BAD31C3E2A4D0B74004795E8 /* PetStateCalculation.swift in Sources */,

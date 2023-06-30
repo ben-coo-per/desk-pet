@@ -33,16 +33,27 @@ struct PetView: View {
         }
     }
     
-    func petPassiveMovement() async{
+    func checkPetState(viewStore: ViewStoreOf<DeskPet>) {
+        let numNewPoops = getNumberOfNewPoops(timeLastFed: viewStore.pet.timeLastFed, existingPoops: viewStore.poops)
+        if(numNewPoops > 0){
+            for _ in 0..<numNewPoops{
+                viewStore.send(.addPoop())
+            }
+        }
+    }
+    
+    func petPassiveMovement(viewStore: ViewStoreOf<DeskPet>) async{
         let timer = ContinuousClock().timer(interval: .milliseconds(1000/GAME_SPEED))
             for await _ in timer {
+                checkPetState(viewStore: viewStore)
                 checkDirectionChange()
                 petPosition = (petDirection ? -1 : 1) * SPEED + petPosition
             }
     }
+    
     var body: some View {
-        WithViewStore(self.store, observe: {$0.pet}){ petStore in
-                if(petStore.isAlive){
+        WithViewStore(self.store, observe: {$0}){ viewStore in
+            if(viewStore.pet.isAlive){
                     Group {
                         Image("Monkey")
                             .resizable()
@@ -62,7 +73,7 @@ struct PetView: View {
                             showPetStatePopover = cursor
                         }
                     }.task {
-                        await petPassiveMovement()
+                        await petPassiveMovement(viewStore: viewStore)
                     }
                 }
                 AnimationsView(store: self.store, petPosition: $petPosition)

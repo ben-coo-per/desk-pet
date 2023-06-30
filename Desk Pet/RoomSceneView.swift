@@ -22,8 +22,9 @@ struct RoomSceneView: View {
                     )
                     .frame(width: CANVAS_WIDTH, height: 50)
                     .offset(x:0, y:25)
-                PetView(store: self.store)
                 GravesView(store: self.store)
+                PoopsView(store: self.store)
+                PetView(store: self.store)
             }
         }
     }

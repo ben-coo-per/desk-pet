@@ -24,8 +24,8 @@ public func getHungerState(timeLastFed: Date) -> Int {
 
 func getNumberOfNewPoops(timeLastFed: Date, existingPoops: [Poop]) -> Int {
     // get the number of hours since timeLastFed
-    let hoursSinceLastFed = abs(timeLastFed.hours(from: Date())) * GAME_SPEED  // Returns a negative number
-    
+    let hoursSinceLastFed = abs(timeLastFed.seconds(from: Date()) * GAME_SPEED / 3600 )
+
     // multiply that by the NUM_POOPS_PER_HR to get expected num of poops
     let numExpectedPoops: Int = hoursSinceLastFed * NUM_POOPS_PER_HR
     

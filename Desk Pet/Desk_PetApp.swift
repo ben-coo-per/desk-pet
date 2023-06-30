@@ -75,6 +75,7 @@ struct DeskPet: ReducerProtocol {
     enum Action: Equatable {
         case feedPet
         case endAnimation
+        case addPoop
       }
     
     func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
@@ -87,6 +88,9 @@ struct DeskPet: ReducerProtocol {
             return .none
         case .endAnimation:
             state.feedingAnimation = false
+            return .none
+        case .addPoop:
+            state.poops.append(Poop())
             return .none
         }
     }
