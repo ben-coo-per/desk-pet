@@ -34,7 +34,7 @@ struct PetView: View {
     }
     
     func petPassiveMovement() async{
-        let timer = ContinuousClock().timer(interval: .seconds(1))
+        let timer = ContinuousClock().timer(interval: .milliseconds(1000/GAME_SPEED))
             for await _ in timer {
                 checkDirectionChange()
                 petPosition = (petDirection ? -1 : 1) * SPEED + petPosition

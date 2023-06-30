@@ -19,7 +19,7 @@ struct GravesView: View {
                     .frame(width: 80, height:80)
                     .padding(.horizontal)
                     .aspectRatio(1, contentMode: .fit)
-                    .offset(x: grave.site, y:-5)
+                    .offset(x: grave.position, y:-5)
             }
         }
     }

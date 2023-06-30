@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 struct Grave: Equatable, Codable {
     var id = UUID()
-    var site: CGFloat
+    var position: CGFloat = CGFloat.random(in: -120...120)
 }
 
 
@@ -19,6 +19,11 @@ struct Pet: Equatable, Codable {
     var isAlive: Bool = true
 }
 
+struct Poop: Equatable, Codable {
+    var id = UUID()
+    var position: CGFloat = CGFloat.random(in: -150...150)
+    var createdAt: Date = Date()
+}
 
 struct DeskPet: ReducerProtocol {
     var fm: FileManager
@@ -29,27 +34,41 @@ struct DeskPet: ReducerProtocol {
     struct State: Equatable {
         var pet: Pet
         var graves: [Grave]
+        var poops: [Poop]
         var feedingAnimation: Bool = false
         
         init() {
             // get pet from storage
             let fm = FileManager()
-            var petFromStorage = fm.getPetFromStorage()
-            var gravesFromStorage = fm.getGravesFromStorage()
-
+            let fromStorage = fm.getFromStorage(storagePaths: ["pet", "graves", "poops"])
+            var petFromStorage = fromStorage.pet ?? Pet()
+            var gravesFromStorage = fromStorage.graves ?? []
+            var poopsFromStorage = fromStorage.poops ?? []
+            
             if(!checkPetIsAlive(timeLastFed: petFromStorage.timeLastFed)){
                 // it's a sad day 😭
                 petFromStorage.isAlive = false
-                gravesFromStorage.append(Grave(site: CGFloat.random(in: -120...120)))
+                gravesFromStorage.append(Grave())
             }
+            
+            // determine how many poops the pet has made while gone
+            let numNewPoops = getNumberOfNewPoops(timeLastFed: petFromStorage.timeLastFed, existingPoops: poopsFromStorage)
+            if(numNewPoops > 0) {
+                for _ in 0..<numNewPoops {
+                    poopsFromStorage.append(Poop())
+                }
+            }
+            
             
             // set the state
             self.pet = petFromStorage
             self.graves = gravesFromStorage
+            self.poops = poopsFromStorage
             
             // update saved storage
             fm.updatePetInStorage(pet: self.pet)
             fm.updateGravesInStorage(graves: self.graves)
+            fm.updatePoopsInStorage(poops: self.poops)
         }
         
     }
@@ -95,12 +114,52 @@ extension Scene {
     }
 }
 
+struct FileStorageReturnType {
+    var pet: Pet?
+    var graves: [Grave]?
+    var poops: [Poop]?
+}
+enum FileStorageOptions {
+    case pet(Pet)
+    case graves([Grave])
+    case poops([Poop])
+}
+
 
 
 extension FileManager {
     private func getFileStorageUrl(path: String) -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0].appendingPathComponent("deskPet/\(path)")
+    }
+    
+    func getFromStorage(storagePaths: [String]?) -> FileStorageReturnType {
+        var fileStorageReturn = FileStorageReturnType()
+        
+        let jsonDecoder = JSONDecoder()
+        for storagePath in storagePaths!{
+            let fileStorageUrl = self.getFileStorageUrl(path: storagePath)
+            do {
+                let json = try Data(contentsOf: fileStorageUrl)
+                switch storagePath {
+                case "pet":
+                    let decoded = try jsonDecoder.decode(Pet.self, from: json)
+                    fileStorageReturn.pet = decoded
+                case "graves":
+                        let decoded = try jsonDecoder.decode([Grave].self, from: json)
+                        fileStorageReturn.graves = decoded
+                case "poops":
+                    let decoded = try jsonDecoder.decode([Poop].self, from: json)
+                    fileStorageReturn.poops = decoded
+                default:
+                    print("\(storagePath) is not a valid path option")
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        
+        return fileStorageReturn
     }
     
     func updatePetInStorage(pet: Pet) -> Void {
@@ -115,20 +174,6 @@ extension FileManager {
         }
     }
 
-    func getPetFromStorage() -> Pet {
-        let jsonDecoder = JSONDecoder()
-        let fileStorageUrl = self.getFileStorageUrl(path: "pet")
-
-        do {
-            let json = try Data(contentsOf: fileStorageUrl)
-            let decoded = try jsonDecoder.decode(Pet.self, from: json)
-            return decoded
-        } catch {
-            print(error.localizedDescription)
-            return Pet()
-        }
-    }
-    
     func updateGravesInStorage(graves: [Grave]) -> Void {
         let jsonEncoder = JSONEncoder()
         let fileStorageUrl = self.getFileStorageUrl(path: "graves")
@@ -141,17 +186,15 @@ extension FileManager {
         }
     }
     
-    func getGravesFromStorage() -> [Grave] {
-        let jsonDecoder = JSONDecoder()
-        let fileStorageUrl = self.getFileStorageUrl(path: "graves")
-
+    func updatePoopsInStorage(poops: [Poop]) -> Void {
+        let jsonEncoder = JSONEncoder()
+        let fileStorageUrl = self.getFileStorageUrl(path: "poops")
         do {
-            let json = try Data(contentsOf: fileStorageUrl)
-            let decoded = try jsonDecoder.decode([Grave].self, from: json)
-            return decoded
+            let json = try jsonEncoder.encode(poops)
+            try json.write(to: fileStorageUrl)
         } catch {
-            print(error.localizedDescription)
-            return []
+            print("Could not upload poops")
+            // TODO: add an error toast/alert of some kind
         }
     }
 }
