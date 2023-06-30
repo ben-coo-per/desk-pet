@@ -23,6 +23,7 @@ struct Poop: Equatable, Codable {
     var id = UUID()
     var position: CGFloat = CGFloat.random(in: -150...150)
     var createdAt: Date = Date()
+    var isCleared: Bool = false
 }
 
 struct DeskPet: ReducerProtocol {
@@ -75,7 +76,9 @@ struct DeskPet: ReducerProtocol {
     enum Action: Equatable {
         case feedPet
         case endAnimation
-        case addPoop
+        case addPoop(CGFloat)
+        case clearPoop(UUID)
+        case poopClicked(UUID)
       }
     
     func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
@@ -86,12 +89,30 @@ struct DeskPet: ReducerProtocol {
             
             state.feedingAnimation = true
             return .none
+            
         case .endAnimation:
             state.feedingAnimation = false
             return .none
-        case .addPoop:
-            state.poops.append(Poop())
+            
+        case let .addPoop(position):
+            state.poops.append(Poop(position: position))
             return .none
+        
+        case let .clearPoop(id):
+            if let i = state.poops.firstIndex(where: {$0.id == id}) {
+                state.poops[i].isCleared = true
+            }
+            return.none
+            
+        case let .poopClicked(id):
+            return .run { [poops = state.poops] send in
+                var filteredPoops = poops
+                if let i = filteredPoops.firstIndex(where: {$0.id == id}) {
+                    filteredPoops[i].isCleared = true
+                }
+                fm.updatePoopsInStorage(poops: filteredPoops)
+                await send(.clearPoop(id))
+            }
         }
     }
 }

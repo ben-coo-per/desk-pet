@@ -13,8 +13,10 @@ struct PoopsView: View {
     
     var body: some View {
         WithViewStore(self.store, observe: {$0.poops}){ poopStore in
-            ForEach(poopStore.state, id: \.id){ poop in
-                Text("💩").offset(x: poop.position)
+            ForEach(poopStore.state.filter({!$0.isCleared}), id: \.id){ poop in
+                Button(action: {poopStore.send(.poopClicked(poop.id))}){
+                    Text("💩")
+                }.offset(x: poop.position, y: 15)
             }
         }
     }

@@ -37,7 +37,7 @@ struct PetView: View {
         let numNewPoops = getNumberOfNewPoops(timeLastFed: viewStore.pet.timeLastFed, existingPoops: viewStore.poops)
         if(numNewPoops > 0){
             for _ in 0..<numNewPoops{
-                viewStore.send(.addPoop())
+                viewStore.send(.addPoop(petPosition))
             }
         }
     }
